@@ -1,8 +1,10 @@
 import express from 'express';
 import productRoute from './product.route.js';
+import typeRoute from './type.route.js';
 
-const rootRouter = express.Router();
+const rootRoute = express.Router();
 
-rootRouter.use('/product', productRoute);
+rootRoute.use('/product', productRoute);
+rootRoute.use('/type', typeRoute);
 
-export default rootRouter;
+export default rootRoute;
