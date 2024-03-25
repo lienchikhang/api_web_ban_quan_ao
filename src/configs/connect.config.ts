@@ -1,4 +1,5 @@
 import { config } from 'dotenv';
+import { Dialect } from 'sequelize';
 
 //:: biến process.env là 1 object có sẵn trong node chứa các biến môi trường có sẵn của node
 /**
@@ -8,10 +9,12 @@ import { config } from 'dotenv';
 config();
 
 console.log('process:: ', process.env)
-
-export default {
-    DATABASE: process.env.DATABASE,
-    USERNAME: process.env.USERNAME,
-    PORT: process.env.PORT,
-    DIALECT: process.env.DIALECT,
+interface IConnect {
+    HOST: string | undefined,
 }
+
+const connectConfig: IConnect = {
+    HOST: process.env.HOST,
+}
+
+export default connectConfig;
