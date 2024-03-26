@@ -115,7 +115,7 @@ const deleteCate = async (req: Request, res: Response) => {
     }
 }
 
-const undoDeleteCates = async (req: Request, res: Response) => {
+const undoDeleteCate = async (req: Request, res: Response) => {
     try {
         const { cateId } = req.params;
 
@@ -152,5 +152,5 @@ export {
     createCate,
     updateCate,
     deleteCate,
-    undoDeleteCates
+    undoDeleteCate
 }
