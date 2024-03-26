@@ -80,7 +80,7 @@ const updateType = async (req: Request, res: Response) => {
             }
         })
 
-        return ResponseCreator.create(200, createModel(201, 'created successfully!', updatedType));
+        return ResponseCreator.create(200, createModel(201, 'created successfully!', updatedType))?.send(res);
 
     } catch (error) {
         return ResponseCreator.create(500);
@@ -96,7 +96,7 @@ const deleteType = async (req: Request, res: Response) => {
         if (!typeId) return ResponseCreator.create(400, createModel(400, 'id is not correct!', typeId))?.send(res);
 
         //check type id
-        if (!numberChecker.scan(typeId)) return ResponseCreator.create(400, createModel(400, 'id is not correct!', typeId))?.send(res);
+        if (!numberChecker.scan(typeId) || !checker.scanSpaceAndChar(typeId)) return ResponseCreator.create(400, createModel(400, 'id is not correct!', typeId))?.send(res);
 
         const isExist = await model.Types.findOne({
             where: {
@@ -114,8 +114,6 @@ const deleteType = async (req: Request, res: Response) => {
             }
         })
 
-        console.log(deletedType)
-
         return ResponseCreator.create(200, createModel(200, 'deleted successfully!', deletedType))?.send(res);
 
 
@@ -132,7 +130,7 @@ const undoDeleteType = async (req: Request, res: Response) => {
         if (!typeId) return ResponseCreator.create(400, createModel(400, 'id is not correct!', typeId))?.send(res);
 
         //check type id
-        if (!numberChecker.scan(typeId)) return ResponseCreator.create(400, createModel(400, 'id is not correct!', typeId))?.send(res);
+        if (!numberChecker.scan(typeId) || !checker.scanSpaceAndChar(typeId)) return ResponseCreator.create(400, createModel(400, 'id is not correct!', typeId))?.send(res);
 
         const isExist = await model.Types.findOne({
             where: {

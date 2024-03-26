@@ -24,6 +24,16 @@ class StringChecker {
 
         return isValid;
     }
+
+    scanSpaceAndChar(string: string): boolean {
+        let isValid = true;
+
+        if (this.hasSpace(string) || this.hasSpecialChar(string)) {
+            isValid = false;
+        }
+
+        return isValid;
+    }
 }
 
 export class NumberChecker {
