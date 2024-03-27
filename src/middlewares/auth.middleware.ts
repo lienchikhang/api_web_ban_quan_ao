@@ -33,7 +33,7 @@ const authenticated = async (req: Request, res: Response, next: NextFunction) =>
     }
 }
 
-const verifyAdmin = async (req: IRequest, res: Response, next: NextFunction) => {
+const verifyAdmin = async (req: Request, res: Response, next: NextFunction) => {
     //get token
     const token = req.headers.token?.toString().split(' ')[1];
 
@@ -46,6 +46,14 @@ const verifyAdmin = async (req: IRequest, res: Response, next: NextFunction) => 
     //authorize
     if (payload.role != 'admin') return ResponseCreator.create(400, createModel(401, 'No permission', ''))?.send(res);
     return next();
+}
+
+const verifyClient = async (req: Request, res: Response, next: NextFunction) => {
+    //get token
+    //check token
+    //verify token
+    //if jwttokenerror => return
+    //if token expired => next
 }
 
 export {

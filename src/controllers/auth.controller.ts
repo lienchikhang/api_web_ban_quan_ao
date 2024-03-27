@@ -4,7 +4,7 @@ import _Model from "../classes/Model.js";
 import { createModel } from "./response.controller.js";
 import StringChecker from "../classes/Checker.js";
 import { hashSync, compareSync } from 'bcrypt';
-import { createRefreshToken, createToken } from "./jwt.controller.js";
+import { createRefreshToken, createToken, decodeToken, verifyRefreshToken, verifyToken } from "./jwt.controller.js";
 import { IRequest } from "../interfaces/auth.interface.js";
 
 
@@ -79,7 +79,7 @@ const login = async (req: Request, res: Response) => {
             const accessToken = createToken({
                 userId: isExist.dataValues.user_id,
                 role: isExist.dataValues.user_role,
-            })
+            }, '15s')
 
             const refreshToken = createRefreshToken({
                 userId: isExist.dataValues.user_id,
@@ -121,10 +121,47 @@ const loginGoogle = (req: Request, res: Response) => {
 const test = (req: Request, res: Response) => {
     return res.status(200).send('successfully')
 }
+
+const refreshToken = async (req: Request, res: Response) => {
+    //get token
+    const token = req.headers.token?.toString().split(' ')[1].trim();
+
+    //check token
+    if (!token) return ResponseCreator.create(400, createModel(401, 'Invalid token!', token))?.send(res);
+
+    //verify accessToken
+    let hasError = verifyToken(token);
+    if (!hasError) return ResponseCreator.create(400, createModel(400, 'Token is still good', ''))?.send(res);
+    if (hasError && hasError.name == 'JsonWebTokenError') return ResponseCreator.create(400, createModel(401, 'Invalid token!', token))?.send(res);
+
+    //decode accessToken
+    const payload = decodeToken(token);
+
+    //find user by id
+    const isExistUser = await model.Users.findByPk(payload.userId);
+
+    //isExist => get refreshToken
+    if (!isExistUser) return ResponseCreator.create(400, createModel(404, 'User not found!', token))?.send(res);
+    const refreshToken = isExistUser.dataValues.refresh_token;
+
+    //verify refreshToken
+    if (!refreshToken) return ResponseCreator.create(400, createModel(400, 'User has not logined yet!', token))?.send(res);
+    hasError = verifyRefreshToken(refreshToken);
+
+    //if refreshToken has expired => return something that force user must login again (delete refreshToken)
+    if (hasError && hasError.name == 'TokenExpiredError') return ResponseCreator.create(400, createModel(401, 'Login expired', 'LoginExpired'))?.send(res);
+
+    //if there's nothing => create new accessToken and send it back
+    const newAccessToken = createToken({ userId: payload.userId, role: payload.role }, '15s');
+
+    return ResponseCreator.create(200, createModel(201, 'Refresh successfully!', newAccessToken))?.send(res);
+}
+
 export {
     register,
     login,
     loginFacebook,
     loginGoogle,
-    test
+    test,
+    refreshToken
 }

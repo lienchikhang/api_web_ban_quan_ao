@@ -18,9 +18,9 @@ const decodeToken = (token: string) => {
     return jwt.decode(token) as IPayload;
 }
 
-const createToken = (payload: IPayload): string => {
+const createToken = (payload: IPayload, exp: string): string => {
     return jwt.sign(payload, secretTokenKey, {
-        expiresIn: '15s'
+        expiresIn: exp
     });
 }
 
@@ -31,7 +31,12 @@ const createRefreshToken = (payload: IPayload): string => {
 }
 
 const verifyRefreshToken = (token: string) => {
-    return jwt.verify(token, secretRefreshTokenKey, err => err);
+    try {
+        jwt.verify(token, secretRefreshTokenKey);
+        return null;
+    } catch (error) {
+        return error as jwt.VerifyErrors;
+    }
 }
 
 export {
