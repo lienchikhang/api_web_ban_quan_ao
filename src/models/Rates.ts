@@ -1,7 +1,7 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
-import type { Products, ProductsId } from './Products.ts';
-import type { Users, UsersId } from './Users.ts';
+import type { Products, ProductsId } from './Products.js';
+import type { Users, UsersId } from './Users.js';
 
 export interface RatesAttributes {
   product_id: number;

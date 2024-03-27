@@ -1,41 +1,41 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
-import type { Carts, CartsId } from './Carts.ts';
-import type { Orders, OrdersId } from './Orders.ts';
-import type { Products, ProductsId } from './Products.ts';
-import type { Rates, RatesId } from './Rates.ts';
+import type { Carts, CartsId } from './Carts.js';
+import type { Orders, OrdersId } from './Orders.js';
+import type { Products, ProductsId } from './Products.js';
+import type { Rates, RatesId } from './Rates.js';
 
 export interface UsersAttributes {
   user_id: number;
-  user_name?: string;
   pass_word?: string;
-  birth_year: string;
-  first_name: string;
-  last_name: string;
+  birth_year?: string;
+  first_name?: string;
+  last_name?: string;
   user_role?: string;
   email: string;
   google_app_id?: string;
   face_app_id?: string;
   is_deleted?: boolean;
+  refresh_token?: string;
 }
 
 export type UsersPk = "user_id";
 export type UsersId = Users[UsersPk];
-export type UsersOptionalAttributes = "user_id" | "user_name" | "pass_word" | "user_role" | "google_app_id" | "face_app_id" | "is_deleted";
+export type UsersOptionalAttributes = "user_id" | "pass_word" | "birth_year" | "first_name" | "last_name" | "user_role" | "google_app_id" | "face_app_id" | "is_deleted" | "refresh_token";
 export type UsersCreationAttributes = Optional<UsersAttributes, UsersOptionalAttributes>;
 
 export class Users extends Model<UsersAttributes, UsersCreationAttributes> implements UsersAttributes {
   user_id!: number;
-  user_name?: string;
   pass_word?: string;
-  birth_year!: string;
-  first_name!: string;
-  last_name!: string;
+  birth_year?: string;
+  first_name?: string;
+  last_name?: string;
   user_role?: string;
   email!: string;
   google_app_id?: string;
   face_app_id?: string;
   is_deleted?: boolean;
+  refresh_token?: string;
 
   // Users hasMany Carts via user_id
   Carts!: Carts[];
@@ -94,25 +94,21 @@ export class Users extends Model<UsersAttributes, UsersCreationAttributes> imple
         allowNull: false,
         primaryKey: true
       },
-      user_name: {
-        type: DataTypes.STRING(250),
-        allowNull: true
-      },
       pass_word: {
         type: DataTypes.STRING(250),
         allowNull: true
       },
       birth_year: {
         type: DataTypes.DATEONLY,
-        allowNull: false
+        allowNull: true
       },
       first_name: {
         type: DataTypes.STRING(150),
-        allowNull: false
+        allowNull: true
       },
       last_name: {
         type: DataTypes.STRING(150),
-        allowNull: false
+        allowNull: true
       },
       user_role: {
         type: DataTypes.STRING(50),
@@ -135,6 +131,10 @@ export class Users extends Model<UsersAttributes, UsersCreationAttributes> imple
         type: DataTypes.BOOLEAN,
         allowNull: true,
         defaultValue: false
+      },
+      refresh_token: {
+        type: DataTypes.TEXT,
+        allowNull: true
       }
     }, {
       sequelize,

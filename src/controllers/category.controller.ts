@@ -1,8 +1,8 @@
 import { Request, Response } from "express"
 import ResponseCreator from "../classes/Response.js"
-import _Model from "../classes/Model.js";
 import { createModel } from "./response.controller.js";
 import StringChecker, { NumberChecker } from "../classes/Checker.js";
+import _Model from "../classes/Model.js";
 
 const model = _Model.getInstance().init();
 const checker = new StringChecker();

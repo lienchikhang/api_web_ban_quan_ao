@@ -1,7 +1,7 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
-import type { Carts, CartsId } from './Carts.ts';
-import type { Products, ProductsId } from './Products.ts';
+import type { Carts, CartsId } from './Carts.js';
+import type { Products, ProductsId } from './Products.js';
 
 export interface CartDetailAttributes {
   cart_id: number;

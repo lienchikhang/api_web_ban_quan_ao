@@ -15,6 +15,11 @@ class StringChecker {
         return regex.test(string);
     }
 
+    scanEmail(email: string) {
+        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return regex.test(email);
+    }
+
     scan(string: string): boolean {
         let isValid = true;
 
@@ -51,6 +56,8 @@ export class NumberChecker {
         return isValid;
     }
 }
+
+
 
 class Checker {
     private stringChecker: StringChecker;

@@ -1,6 +1,6 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
-import type { Products, ProductsId } from './Products.ts';
+import type { Products, ProductsId } from './Products.js';
 
 export interface CategoriesAttributes {
   cate_id: number;

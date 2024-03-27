@@ -1,6 +1,6 @@
 import type { Sequelize } from "sequelize";
 import { CartDetail as _CartDetail } from "./CartDetail.js";
-import type { CartDetailAttributes, CartDetailCreationAttributes } from "./CartDetail.ts";
+import type { CartDetailAttributes, CartDetailCreationAttributes } from "./CartDetail.js";
 import { Carts as _Carts } from "./Carts.js";
 import type { CartsAttributes, CartsCreationAttributes } from "./Carts.js";
 import { Categories as _Categories } from "./Categories.js";
@@ -8,25 +8,25 @@ import type { CategoriesAttributes, CategoriesCreationAttributes } from "./Categ
 import { Colors as _Colors } from "./Colors.js";
 import type { ColorsAttributes, ColorsCreationAttributes } from "./Colors.js";
 import { Images as _Images } from "./Images.js";
-import type { ImagesAttributes, ImagesCreationAttributes } from "./Images.ts";
+import type { ImagesAttributes, ImagesCreationAttributes } from "./Images.js";
 import { OrderDetail as _OrderDetail } from "./OrderDetail.js";
-import type { OrderDetailAttributes, OrderDetailCreationAttributes } from "./OrderDetail.ts";
+import type { OrderDetailAttributes, OrderDetailCreationAttributes } from "./OrderDetail.js";
 import { Orders as _Orders } from "./Orders.js";
-import type { OrdersAttributes, OrdersCreationAttributes } from "./Orders.ts";
+import type { OrdersAttributes, OrdersCreationAttributes } from "./Orders.js";
 import { Prices as _Prices } from "./Prices.js";
-import type { PricesAttributes, PricesCreationAttributes } from "./Prices.ts";
+import type { PricesAttributes, PricesCreationAttributes } from "./Prices.js";
 import { Product_Color as _Product_Color } from "./Product_Color.js";
-import type { Product_ColorAttributes, Product_ColorCreationAttributes } from "./Product_Color.ts";
+import type { Product_ColorAttributes, Product_ColorCreationAttributes } from "./Product_Color.js";
 import { Products as _Products } from "./Products.js";
-import type { ProductsAttributes, ProductsCreationAttributes } from "./Products.ts";
+import type { ProductsAttributes, ProductsCreationAttributes } from "./Products.js";
 import { Rates as _Rates } from "./Rates.js";
-import type { RatesAttributes, RatesCreationAttributes } from "./Rates.ts";
+import type { RatesAttributes, RatesCreationAttributes } from "./Rates.js";
 import { Sizes as _Sizes } from "./Sizes.js";
-import type { SizesAttributes, SizesCreationAttributes } from "./Sizes.ts";
+import type { SizesAttributes, SizesCreationAttributes } from "./Sizes.js";
 import { Types as _Types } from "./Types.js";
-import type { TypesAttributes, TypesCreationAttributes } from "./Types.ts";
+import type { TypesAttributes, TypesCreationAttributes } from "./Types.js";
 import { Users as _Users } from "./Users.js";
-import type { UsersAttributes, UsersCreationAttributes } from "./Users.ts";
+import type { UsersAttributes, UsersCreationAttributes } from "./Users.js";
 
 export {
   _CartDetail as CartDetail,

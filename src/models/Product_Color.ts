@@ -1,7 +1,7 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
-import type { Colors, ColorsId } from './Colors.ts';
-import type { Products, ProductsId } from './Products.ts';
+import type { Colors, ColorsId } from './Colors.js';
+import type { Products, ProductsId } from './Products.js';
 
 export interface Product_ColorAttributes {
   color_id: number;

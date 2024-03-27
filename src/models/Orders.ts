@@ -1,8 +1,8 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
-import type { OrderDetail, OrderDetailId } from './OrderDetail.ts';
-import type { Products, ProductsId } from './Products.ts';
-import type { Users, UsersId } from './Users.ts';
+import type { OrderDetail, OrderDetailId } from './OrderDetail.js';
+import type { Products, ProductsId } from './Products.js';
+import type { Users, UsersId } from './Users.js';
 
 export interface OrdersAttributes {
   order_id: number;

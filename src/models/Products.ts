@@ -1,17 +1,17 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
-import type { CartDetail, CartDetailId } from './CartDetail.ts';
-import type { Carts, CartsId } from './Carts.ts';
-import type { Categories, CategoriesId } from './Categories.ts';
-import type { Colors, ColorsId } from './Colors.ts';
-import type { Images, ImagesId } from './Images.ts';
-import type { OrderDetail, OrderDetailId } from './OrderDetail.ts';
-import type { Orders, OrdersId } from './Orders.ts';
-import type { Prices, PricesId } from './Prices.ts';
-import type { Product_Color, Product_ColorId } from './Product_Color.ts';
-import type { Rates, RatesId } from './Rates.ts';
-import type { Types, TypesId } from './Types.ts';
-import type { Users, UsersId } from './Users.ts';
+import type { CartDetail, CartDetailId } from './CartDetail.js';
+import type { Carts, CartsId } from './Carts.js';
+import type { Categories, CategoriesId } from './Categories.js';
+import type { Colors, ColorsId } from './Colors.js';
+import type { Images, ImagesId } from './Images.js';
+import type { OrderDetail, OrderDetailId } from './OrderDetail.js';
+import type { Orders, OrdersId } from './Orders.js';
+import type { Prices, PricesId } from './Prices.js';
+import type { Product_Color, Product_ColorId } from './Product_Color.js';
+import type { Rates, RatesId } from './Rates.js';
+import type { Types, TypesId } from './Types.js';
+import type { Users, UsersId } from './Users.js';
 
 export interface ProductsAttributes {
   product_id: number;
