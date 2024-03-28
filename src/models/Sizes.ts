@@ -3,8 +3,8 @@ import { DataTypes, Model, Optional } from 'sequelize';
 
 export interface SizesAttributes {
   size_id: number;
-  size_num: number;
   is_deleted?: boolean;
+  size_key: string;
 }
 
 export type SizesPk = "size_id";
@@ -14,8 +14,8 @@ export type SizesCreationAttributes = Optional<SizesAttributes, SizesOptionalAtt
 
 export class Sizes extends Model<SizesAttributes, SizesCreationAttributes> implements SizesAttributes {
   size_id!: number;
-  size_num!: number;
   is_deleted?: boolean;
+  size_key!: string;
 
 
   static initModel(sequelize: Sequelize.Sequelize): typeof Sizes {
@@ -26,14 +26,14 @@ export class Sizes extends Model<SizesAttributes, SizesCreationAttributes> imple
       allowNull: false,
       primaryKey: true
     },
-    size_num: {
-      type: DataTypes.INTEGER,
-      allowNull: false
-    },
     is_deleted: {
       type: DataTypes.BOOLEAN,
       allowNull: true,
       defaultValue: false
+    },
+    size_key: {
+      type: DataTypes.STRING(10),
+      allowNull: false
     }
   }, {
     sequelize,

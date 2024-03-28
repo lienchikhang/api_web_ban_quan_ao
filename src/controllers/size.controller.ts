@@ -12,7 +12,7 @@ const numberChecker = new NumberChecker();
 const getSize = async (req: Request, res: Response) => {
     try {
         const size = await model.Sizes.findAll({
-            attributes: ['size_id', 'cate_num'],
+            attributes: ['size_id', 'size_key'],
             where: {
                 is_deleted: 0,
             }
@@ -27,22 +27,25 @@ const getSize = async (req: Request, res: Response) => {
 //::role::admin
 const createSize = async (req: Request, res: Response) => {
     try {
-        const { sizeNum } = req.body;
+        let sizeStr: string;
+        const { sizeKey } = req.body;
 
         //checking syntax cateName
-        if (!sizeNum || !numberChecker.scan(sizeNum)) return ResponseCreator.create(400, createModel(400, 'Invalid size!', sizeNum))?.send(res);
+        if (!sizeKey || numberChecker.scan(sizeKey) || !checker.scanSpaceAndChar(sizeKey)) return ResponseCreator.create(400, createModel(400, 'Invalid size!', sizeKey))?.send(res);
+
+        sizeStr = sizeKey;
 
         //checking is exist
         const isExist = await model.Sizes.findOne({
             where: {
-                size_num: sizeNum,
+                size_key: sizeStr.toUpperCase(),
             }
         })
 
-        if (isExist) return ResponseCreator.create(400, createModel(400, 'Size has already existed!', sizeNum))?.send(res);
+        if (isExist) return ResponseCreator.create(400, createModel(400, 'Size has already existed!', sizeKey))?.send(res);
 
         const newCate = await model.Sizes.create({
-            size_num: sizeNum,
+            size_key: sizeStr.toUpperCase(),
         })
 
         return ResponseCreator.create(200, createModel(201, 'Successfully!', newCate))?.send(res);
