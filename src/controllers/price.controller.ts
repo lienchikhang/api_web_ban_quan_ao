@@ -18,9 +18,9 @@ const getPrices = async (req: Request, res: Response) => {
             }
         });
 
-        return ResponseCreator.create(200, createModel(201, 'successfully!', prices))?.send(res);
+        return ResponseCreator.create(200, createModel(201, 'Successfully!', prices))?.send(res);
     } catch (error) {
-        return ResponseCreator.create(500);
+        return ResponseCreator.create(500)?.send(res);
     }
 }
 
@@ -29,19 +29,19 @@ const getPriceById = async (req: Request, res: Response) => {
     try {
         const { priceId } = req.params;
 
-        if (!priceId) return ResponseCreator.create(400, createModel(400, 'Id is not correct!', priceId))?.send(res);
+        if (!priceId) return ResponseCreator.create(400, createModel(400, 'Invalid priceId!', priceId))?.send(res);
 
-        if (!numberChecker.scan(priceId) || !checker.scanSpaceAndChar(priceId)) return ResponseCreator.create(400, createModel(400, 'Id is not correct!', priceId))?.send(res);
+        if (!numberChecker.scan(priceId) || !checker.scanSpaceAndChar(priceId)) return ResponseCreator.create(400, createModel(400, 'Invalid priceId!', priceId))?.send(res);
 
         const price = await model.Prices.findByPk(priceId, {
             attributes: ['price_id', 'price_num']
         });
 
-        if (!price) return ResponseCreator.create(400, createModel(404, 'price not found', priceId));
+        if (!price) return ResponseCreator.create(400, createModel(404, 'Price not found', priceId));
 
-        return ResponseCreator.create(200, createModel(200, 'successfully!', price))?.send(res);
+        return ResponseCreator.create(200, createModel(200, 'Successfully!', price))?.send(res);
     } catch (error) {
-        return ResponseCreator.create(500);
+        return ResponseCreator.create(500)?.send(res);
     }
 }
 
@@ -51,15 +51,15 @@ const createPrice = async (req: Request, res: Response) => {
         const { priceNum } = req.body;
 
         //checking syntax priceNum
-        if (!priceNum || !numberChecker.scan(priceNum) || !checker.scanSpaceAndChar(priceNum)) return ResponseCreator.create(400, createModel(400, 'price is not correct!', priceNum))?.send(res);
+        if (!priceNum || !numberChecker.scan(priceNum) || !checker.scanSpaceAndChar(priceNum)) return ResponseCreator.create(400, createModel(400, 'Invalid price!', priceNum))?.send(res);
 
         const newPrice = await model.Prices.create({
             price_num: priceNum,
         })
 
-        return ResponseCreator.create(200, createModel(201, 'successfully!', newPrice))?.send(res);
+        return ResponseCreator.create(200, createModel(201, 'Successfully!', newPrice))?.send(res);
     } catch (error) {
-        return ResponseCreator.create(500);
+        return ResponseCreator.create(500)?.send(res);
     }
 }
 
@@ -68,13 +68,13 @@ const updatePrice = async (req: Request, res: Response) => {
     try {
         const { priceId, newPriceNum } = req.body;
 
-        if (!newPriceNum || !priceId) return ResponseCreator.create(400, createModel(400, 'type or id is not correct!', { priceId, newPriceNum }))?.send(res);
+        if (!newPriceNum || !priceId) return ResponseCreator.create(400, createModel(400, 'Invalid price or priceId!', { priceId, newPriceNum }))?.send(res);
 
         //check price id
-        if (!numberChecker.scan(priceId) || !checker.scanSpaceAndChar(priceId)) return ResponseCreator.create(400, createModel(400, 'id is not correct!', priceId))?.send(res);
+        if (!numberChecker.scan(priceId) || !checker.scanSpaceAndChar(priceId)) return ResponseCreator.create(400, createModel(400, 'Invalid priceId!', priceId))?.send(res);
 
         //check newPriceNum
-        if (!numberChecker.scan(newPriceNum) || !checker.scanSpaceAndChar(newPriceNum)) return ResponseCreator.create(400, createModel(400, 'price is not correct!', newPriceNum))?.send(res);
+        if (!numberChecker.scan(newPriceNum) || !checker.scanSpaceAndChar(newPriceNum)) return ResponseCreator.create(400, createModel(400, 'Invalid price!', newPriceNum))?.send(res);
 
         //checking is exist
         const isExist = await model.Prices.findOne({
@@ -83,7 +83,7 @@ const updatePrice = async (req: Request, res: Response) => {
             }
         })
 
-        if (!isExist) return ResponseCreator.create(400, createModel(404, 'price not found!', priceId))?.send(res);
+        if (!isExist) return ResponseCreator.create(400, createModel(404, 'Price not found!', priceId))?.send(res);
 
         const updatedCate = await model.Prices.update({ price_num: newPriceNum }, {
             where: {
@@ -91,10 +91,10 @@ const updatePrice = async (req: Request, res: Response) => {
             }
         })
 
-        return ResponseCreator.create(200, createModel(201, 'updated successfully!', updatedCate))?.send(res);
+        return ResponseCreator.create(200, createModel(201, 'Update successfully!', updatedCate))?.send(res);
 
     } catch (error) {
-        return ResponseCreator.create(500);
+        return ResponseCreator.create(500)?.send(res);
     }
 }
 
@@ -104,10 +104,10 @@ const deletePrice = async (req: Request, res: Response) => {
         const { priceId } = req.params;
 
         //check null
-        if (!priceId) return ResponseCreator.create(400, createModel(400, 'id is not correct!', priceId))?.send(res);
+        if (!priceId) return ResponseCreator.create(400, createModel(400, 'Invalid priceId!', priceId))?.send(res);
 
         //check cate id
-        if (!numberChecker.scan(priceId) || !checker.scanSpaceAndChar(priceId)) return ResponseCreator.create(400, createModel(400, 'id is not correct!', priceId))?.send(res);
+        if (!numberChecker.scan(priceId) || !checker.scanSpaceAndChar(priceId)) return ResponseCreator.create(400, createModel(400, 'Invalid priceId!', priceId))?.send(res);
 
         const isExist = await model.Prices.findOne({
             where: {
@@ -116,7 +116,7 @@ const deletePrice = async (req: Request, res: Response) => {
         })
 
         //check exist
-        if (!isExist) return ResponseCreator.create(400, createModel(404, 'price not found!', priceId))?.send(res);
+        if (!isExist) return ResponseCreator.create(400, createModel(404, 'Price not found!', priceId))?.send(res);
 
         //delete
         const deletedType = await model.Prices.update({ is_deleted: true }, {
@@ -125,9 +125,9 @@ const deletePrice = async (req: Request, res: Response) => {
             }
         })
 
-        return ResponseCreator.create(200, createModel(200, 'deleted successfully!', deletedType))?.send(res);
+        return ResponseCreator.create(200, createModel(200, 'Delete successfully!', deletedType))?.send(res);
     } catch (error) {
-        return ResponseCreator.create(500);
+        return ResponseCreator.create(500)?.send(res);
     }
 }
 
@@ -137,10 +137,10 @@ const undoDeletePrice = async (req: Request, res: Response) => {
         const { priceId } = req.params;
 
         //check null
-        if (!priceId) return ResponseCreator.create(400, createModel(400, 'id is not correct!', priceId))?.send(res);
+        if (!priceId) return ResponseCreator.create(400, createModel(400, 'Invalid priceId!', priceId))?.send(res);
 
         //check cate id
-        if (!numberChecker.scan(priceId) || !checker.scanSpaceAndChar(priceId)) return ResponseCreator.create(400, createModel(400, 'id is not correct!', priceId))?.send(res);
+        if (!numberChecker.scan(priceId) || !checker.scanSpaceAndChar(priceId)) return ResponseCreator.create(400, createModel(400, 'Invalid priceId!', priceId))?.send(res);
 
         const isExist = await model.Prices.findOne({
             where: {
@@ -149,7 +149,7 @@ const undoDeletePrice = async (req: Request, res: Response) => {
         })
 
         //check exist
-        if (!isExist) return ResponseCreator.create(400, createModel(404, 'price not found!', priceId))?.send(res);
+        if (!isExist) return ResponseCreator.create(400, createModel(404, 'Price not found!', priceId))?.send(res);
 
         //delete
         const deletedCate = await model.Prices.update({ is_deleted: false }, {
@@ -158,9 +158,9 @@ const undoDeletePrice = async (req: Request, res: Response) => {
             }
         })
 
-        return ResponseCreator.create(200, createModel(200, 'undo successfully!', deletedCate))?.send(res);
+        return ResponseCreator.create(200, createModel(200, 'Undo successfully!', deletedCate))?.send(res);
     } catch (error) {
-        return ResponseCreator.create(500);
+        return ResponseCreator.create(500)?.send(res);
     }
 }
 

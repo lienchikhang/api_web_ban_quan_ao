@@ -26,7 +26,7 @@ const createToken = (payload: IPayload, exp: string): string => {
 
 const createRefreshToken = (payload: IPayload): string => {
     return jwt.sign(payload, secretRefreshTokenKey, {
-        expiresIn: '30d',
+        expiresIn: '1d',
     });
 }
 
