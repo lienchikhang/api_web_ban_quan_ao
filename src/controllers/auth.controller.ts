@@ -5,8 +5,6 @@ import { createModel } from "./response.controller.js";
 import StringChecker from "../classes/Checker.js";
 import { hashSync, compareSync } from 'bcrypt';
 import { createRefreshToken, createToken, decodeToken, verifyRefreshToken, verifyToken } from "./jwt.controller.js";
-import { IRequest } from "../interfaces/auth.interface.js";
-
 
 const model = _Model.getInstance().init();
 const checker = new StringChecker();
