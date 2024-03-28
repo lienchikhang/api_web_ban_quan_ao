@@ -1,6 +1,6 @@
 
 class StringChecker {
-    private hasSpecialChar(string: string) {
+    public hasSpecialChar(string: string) {
         const regex = /[\W_]/;
         return regex.test(string);
     }
@@ -55,6 +55,12 @@ export class NumberChecker {
 
         return isValid;
     }
+}
+
+export class ObjectChecker {
+    isEmptyObject(obj: Object) {
+        return Object.keys(obj).length === 0;
+    };
 }
 
 

@@ -8,7 +8,7 @@ const model = _Model.getInstance().init();
 const checker = new StringChecker();
 const numberChecker = new NumberChecker();
 
-//::role::admin
+//::role::client && admin
 const getPrices = async (req: Request, res: Response) => {
     try {
         const prices = await model.Prices.findAll({
@@ -45,7 +45,7 @@ const getPriceById = async (req: Request, res: Response) => {
     }
 }
 
-//::role::client
+//::role::admin
 const createPrice = async (req: Request, res: Response) => {
     try {
         const { priceNum } = req.body;
