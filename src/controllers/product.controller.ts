@@ -5,6 +5,7 @@ import ResponseCreator from "../classes/Response.js";
 import { createModel } from "./response.controller.js";
 import { Op } from 'sequelize'
 import { parse } from "dotenv";
+import { IProduct, IProductType } from "../interfaces/product.interface.js";
 
 const model = _Model.getInstance().init();
 const checker = new StringChecker();
@@ -59,7 +60,7 @@ const getProductById = async (req: Request, res: Response) => {
 
         if (!numberChecker.scan(productId) || !checker.scanSpaceAndChar(productId)) return ResponseCreator.create(400, createModel(400, 'Invalid productId!', productId))?.send(res);
 
-        const product = await model.Products.findByPk(productId, {
+        let product = await model.Products.findByPk(productId, {
             attributes: ['product_id', 'product_name', 'product_desc'],
             include: [{
                 model: model.Types,
@@ -73,13 +74,40 @@ const getProductById = async (req: Request, res: Response) => {
                 model: model.Prices,
                 attributes: ['price_num'],
                 as: 'price'
-            }, 'Images'],
+            }, {
+                model: model.Images,
+                attributes: ['img_url'],
+                as: 'Images'
+            }, {
+                model: model.Product_Size,
+                attributes: ['size_id'],
+                include: [{
+                    model: model.Sizes,
+                    attributes: ['size_key'],
+                    as: 'size'
+                }],
+                as: 'Product_Sizes'
+            }, {
+                model: model.Product_Color,
+                attributes: ['color_id'],
+                include: [{
+                    model: model.Colors,
+                    attributes: ['color_hex', 'color_name'],
+                    as: 'color'
+                }],
+                as: 'Product_Colors'
+            }],
         });
 
-        if (!product) return ResponseCreator.create(400, createModel(404, 'Product not found', productId));
+        console.log('product:: ', product)
+        let finalProduct = convertProduct(product as IProduct);
 
-        return ResponseCreator.create(200, createModel(200, 'Successfully!', product))?.send(res);
+
+        if (!product) return ResponseCreator.create(400, createModel(404, 'Product not found', productId))?.send(res);
+
+        return ResponseCreator.create(200, createModel(200, 'Successfully!', finalProduct))?.send(res);
     } catch (error) {
+        console.log('err:: ', error)
         return ResponseCreator.create(500)?.send(res);
     }
 }
@@ -305,6 +333,27 @@ const undoDeleteProduct = async (req: Request, res: Response) => {
     } catch (error) {
         return ResponseCreator.create(500)?.send(res);
     }
+}
+
+const convertProduct = (product: IProduct) => {
+    return {
+        product_id: product.product_id,
+        product_name: product.product_name,
+        product_desc: product.product_desc,
+        type: product.type ? product.type.type_name : null,
+        cate: product.cate ? product.cate.cate_name : null,
+        price: product.price ? product.price.price_num : null,
+        Images: product.Images ? product.Images.map(image => image.img_url) : [],
+        Product_Sizes: product.Product_Sizes ? product.Product_Sizes.map(size => ({
+            size_id: size.size_id,
+            size_key: size.size ? size.size.size_key : null
+        })) : [],
+        Product_Colors: product.Product_Colors ? product.Product_Colors.map(color => ({
+            color_id: color.color_id,
+            color_hex: color.color ? color.color.color_hex : null,
+            color_name: color.color ? color.color.color_name : null
+        })) : []
+    };
 }
 
 export {
