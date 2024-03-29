@@ -3,48 +3,89 @@ import _Model from "../classes/Model.js";
 import StringChecker, { NumberChecker, ObjectChecker } from "../classes/Checker.js";
 import ResponseCreator from "../classes/Response.js";
 import { createModel } from "./response.controller.js";
-import { Op } from 'sequelize'
+import { Op, WhereOptions } from 'sequelize'
 import { parse } from "dotenv";
-import { IProduct, IProductType } from "../interfaces/product.interface.js";
+import { ICondition, IIncludeCondition, IProduct, IProductType } from "../interfaces/product.interface.js";
+import { ProductsAttributes } from "../models/Products.js";
 
 const model = _Model.getInstance().init();
 const checker = new StringChecker();
 const numberChecker = new NumberChecker();
 const objectChecker = new ObjectChecker();
 
+
 //::role::client && admin
 const getProducts = async (req: Request, res: Response) => {
     try {
-        let { pageSize = 5, lastRecord = 0 } = req.query;
+        let { pageSize = 5, lastRecord = 0, size, color } = req.query;
+        let products: Array<IProduct>;
+        console.log({ pageSize, lastRecord, size, color })
 
-        if (!numberChecker.scan(lastRecord)) return;
+        //check lastRecord is number
+        if (!numberChecker.scan(lastRecord)) return ResponseCreator.create(400, createModel(400, 'Invalid next record', lastRecord))?.send(res);
+
+        //check size is a string and doesnt have special char
+        if (!checker.scanSpaceAndChar(size as string)) return ResponseCreator.create(400, createModel(400, 'Invalid size', size))?.send(res);
+
+        //check color
+        if (!checker.scanSpaceAndChar(color as string)) return ResponseCreator.create(400, createModel(400, 'Invalid color', color))?.send(res);
 
         lastRecord = parseInt(lastRecord as string);
         pageSize = parseInt(pageSize as string);
 
-        const products = await model.Products.findAll({
-            attributes: ['product_id', 'product_name', 'product_desc'],
-            include: [{
-                model: model.Prices,
-                attributes: ['price_num'],
-                as: 'price'
-            }, {
-                model: model.Images,
-                attributes: ['img_url'],
-                as: 'Images'
-            }],
-            where: {
-                [Op.and]: {
-                    is_deleted: 0,
-                    product_id: {
-                        [Op.gt]: lastRecord
-                    }
+        //base mapping
+        const includes = [{
+            model: model.Prices,
+            attributes: ['price_num'],
+            as: 'price'
+        }, {
+            model: model.Images,
+            attributes: ['img_url'],
+            as: 'Images'
+        }] as Array<IIncludeCondition>;
+
+        //if has size condition => add to base mapping
+        if (size) {
+            includes.push({
+                model: model.Sizes,
+                attributes: ['size_key'],
+                as: 'size_id_Sizes',
+                where: {
+                    size_key: size.toString().toUpperCase()
                 }
+            })
+        }
+
+        //if has color condition => add to base mapping
+        if (color) {
+            includes.push({
+                model: model.Colors,
+                attributes: ['color_name'],
+                as: 'color_id_Colors',
+                where: {
+                    color_name: color.toString().toUpperCase()
+                }
+            })
+        }
+
+        products = await model.Products.findAll({
+            attributes: ['product_id', 'product_name', 'product_desc'],
+            include: includes,
+            where: {
+                [Op.and]: [
+                    { is_deleted: 0 },
+                    {
+                        product_id: {
+                            [Op.gt]: lastRecord
+                        }
+                    },
+                ]
             },
             limit: pageSize,
         });
 
-        return ResponseCreator.create(200, createModel(200, 'Successfully!', { productList: products, lastRecord: products[products.length - 1].product_id }))?.send(res);
+        return ResponseCreator.create(200, createModel(200, 'Successfully!', { productList: products, lastRecord: products[products.length - 1]?.product_id }))?.send(res);
+
     } catch (error) {
         console.log('err:: ', error);
         return ResponseCreator.create(500)?.send(res);
@@ -99,9 +140,7 @@ const getProductById = async (req: Request, res: Response) => {
             }],
         });
 
-        console.log('product:: ', product)
         let finalProduct = convertProduct(product as IProduct);
-
 
         if (!product) return ResponseCreator.create(400, createModel(404, 'Product not found', productId))?.send(res);
 
@@ -343,12 +382,12 @@ const convertProduct = (product: IProduct) => {
         type: product.type ? product.type.type_name : null,
         cate: product.cate ? product.cate.cate_name : null,
         price: product.price ? product.price.price_num : null,
-        Images: product.Images ? product.Images.map(image => image.img_url) : [],
-        Product_Sizes: product.Product_Sizes ? product.Product_Sizes.map(size => ({
+        images: product.Images ? product.Images.map(image => image.img_url) : [],
+        sizes: product.Product_Sizes ? product.Product_Sizes.map(size => ({
             size_id: size.size_id,
             size_key: size.size ? size.size.size_key : null
         })) : [],
-        Product_Colors: product.Product_Colors ? product.Product_Colors.map(color => ({
+        colors: product.Product_Colors ? product.Product_Colors.map(color => ({
             color_id: color.color_id,
             color_hex: color.color ? color.color.color_hex : null,
             color_name: color.color ? color.color.color_name : null

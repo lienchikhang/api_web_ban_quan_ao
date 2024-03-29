@@ -1,4 +1,3 @@
-import { Types } from "../models/Types.js";
 
 export interface IProductType {
     type_name: string,
@@ -33,4 +32,20 @@ export interface IProduct {
             color_name: string,
         }
     }[]
+}
+
+export interface IIncludeCondition {
+    model: any,
+    attributes: string[],
+    as: string,
+    where?: {
+
+    }
+}
+
+export interface ICondition {
+    is_deleted?: number,
+    product_id?: {},
+    size_key?: string,
+    color?: string,
 }
