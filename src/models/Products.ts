@@ -9,7 +9,9 @@ import type { OrderDetail, OrderDetailId } from './OrderDetail.js';
 import type { Orders, OrdersId } from './Orders.js';
 import type { Prices, PricesId } from './Prices.js';
 import type { Product_Color, Product_ColorId } from './Product_Color.js';
+import type { Product_Size, Product_SizeId } from './Product_Size.js';
 import type { Rates, RatesId } from './Rates.js';
+import type { Sizes, SizesId } from './Sizes.js';
 import type { Types, TypesId } from './Types.js';
 import type { Users, UsersId } from './Users.js';
 
@@ -131,6 +133,18 @@ export class Products extends Model<ProductsAttributes, ProductsCreationAttribut
   hasProduct_Color!: Sequelize.HasManyHasAssociationMixin<Product_Color, Product_ColorId>;
   hasProduct_Colors!: Sequelize.HasManyHasAssociationsMixin<Product_Color, Product_ColorId>;
   countProduct_Colors!: Sequelize.HasManyCountAssociationsMixin;
+  // Products hasMany Product_Size via product_id
+  Product_Sizes!: Product_Size[];
+  getProduct_Sizes!: Sequelize.HasManyGetAssociationsMixin<Product_Size>;
+  setProduct_Sizes!: Sequelize.HasManySetAssociationsMixin<Product_Size, Product_SizeId>;
+  addProduct_Size!: Sequelize.HasManyAddAssociationMixin<Product_Size, Product_SizeId>;
+  addProduct_Sizes!: Sequelize.HasManyAddAssociationsMixin<Product_Size, Product_SizeId>;
+  createProduct_Size!: Sequelize.HasManyCreateAssociationMixin<Product_Size>;
+  removeProduct_Size!: Sequelize.HasManyRemoveAssociationMixin<Product_Size, Product_SizeId>;
+  removeProduct_Sizes!: Sequelize.HasManyRemoveAssociationsMixin<Product_Size, Product_SizeId>;
+  hasProduct_Size!: Sequelize.HasManyHasAssociationMixin<Product_Size, Product_SizeId>;
+  hasProduct_Sizes!: Sequelize.HasManyHasAssociationsMixin<Product_Size, Product_SizeId>;
+  countProduct_Sizes!: Sequelize.HasManyCountAssociationsMixin;
   // Products hasMany Rates via product_id
   Rates!: Rates[];
   getRates!: Sequelize.HasManyGetAssociationsMixin<Rates>;
@@ -143,6 +157,18 @@ export class Products extends Model<ProductsAttributes, ProductsCreationAttribut
   hasRate!: Sequelize.HasManyHasAssociationMixin<Rates, RatesId>;
   hasRates!: Sequelize.HasManyHasAssociationsMixin<Rates, RatesId>;
   countRates!: Sequelize.HasManyCountAssociationsMixin;
+  // Products belongsToMany Sizes via product_id and size_id
+  size_id_Sizes!: Sizes[];
+  getSize_id_Sizes!: Sequelize.BelongsToManyGetAssociationsMixin<Sizes>;
+  setSize_id_Sizes!: Sequelize.BelongsToManySetAssociationsMixin<Sizes, SizesId>;
+  addSize_id_Size!: Sequelize.BelongsToManyAddAssociationMixin<Sizes, SizesId>;
+  addSize_id_Sizes!: Sequelize.BelongsToManyAddAssociationsMixin<Sizes, SizesId>;
+  createSize_id_Size!: Sequelize.BelongsToManyCreateAssociationMixin<Sizes>;
+  removeSize_id_Size!: Sequelize.BelongsToManyRemoveAssociationMixin<Sizes, SizesId>;
+  removeSize_id_Sizes!: Sequelize.BelongsToManyRemoveAssociationsMixin<Sizes, SizesId>;
+  hasSize_id_Size!: Sequelize.BelongsToManyHasAssociationMixin<Sizes, SizesId>;
+  hasSize_id_Sizes!: Sequelize.BelongsToManyHasAssociationsMixin<Sizes, SizesId>;
+  countSize_id_Sizes!: Sequelize.BelongsToManyCountAssociationsMixin;
   // Products belongsToMany Users via product_id and user_id
   user_id_Users!: Users[];
   getUser_id_Users!: Sequelize.BelongsToManyGetAssociationsMixin<Users>;

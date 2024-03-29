@@ -7,6 +7,7 @@ export interface ColorsAttributes {
   color_id: number;
   color_hex: string;
   is_deleted?: boolean;
+  color_name: string;
 }
 
 export type ColorsPk = "color_id";
@@ -18,6 +19,7 @@ export class Colors extends Model<ColorsAttributes, ColorsCreationAttributes> im
   color_id!: number;
   color_hex!: string;
   is_deleted?: boolean;
+  color_name!: string;
 
   // Colors hasMany Product_Color via color_id
   Product_Colors!: Product_Color[];
@@ -60,6 +62,10 @@ export class Colors extends Model<ColorsAttributes, ColorsCreationAttributes> im
         type: DataTypes.BOOLEAN,
         allowNull: true,
         defaultValue: false
+      },
+      color_name: {
+        type: DataTypes.STRING(50),
+        allowNull: false
       }
     }, {
       sequelize,
