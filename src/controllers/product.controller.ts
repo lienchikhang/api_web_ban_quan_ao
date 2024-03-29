@@ -3,6 +3,8 @@ import _Model from "../classes/Model.js";
 import StringChecker, { NumberChecker, ObjectChecker } from "../classes/Checker.js";
 import ResponseCreator from "../classes/Response.js";
 import { createModel } from "./response.controller.js";
+import { Op } from 'sequelize'
+import { parse } from "dotenv";
 
 const model = _Model.getInstance().init();
 const checker = new StringChecker();
@@ -12,20 +14,38 @@ const objectChecker = new ObjectChecker();
 //::role::client && admin
 const getProducts = async (req: Request, res: Response) => {
     try {
+        let { pageSize = 5, lastRecord = 0 } = req.query;
+
+        if (!numberChecker.scan(lastRecord)) return;
+
+        lastRecord = parseInt(lastRecord as string);
+        pageSize = parseInt(pageSize as string);
+
         const products = await model.Products.findAll({
             attributes: ['product_id', 'product_name', 'product_desc'],
             include: [{
                 model: model.Prices,
                 attributes: ['price_num'],
                 as: 'price'
-            }, 'Images'],
+            }, {
+                model: model.Images,
+                attributes: ['img_url'],
+                as: 'Images'
+            }],
             where: {
-                is_deleted: 0,
-            }
+                [Op.and]: {
+                    is_deleted: 0,
+                    product_id: {
+                        [Op.gt]: lastRecord
+                    }
+                }
+            },
+            limit: pageSize,
         });
 
-        return ResponseCreator.create(200, createModel(201, 'Successfully!', products))?.send(res);
+        return ResponseCreator.create(200, createModel(200, 'Successfully!', { productList: products, lastRecord: products[products.length - 1].product_id }))?.send(res);
     } catch (error) {
+        console.log('err:: ', error);
         return ResponseCreator.create(500)?.send(res);
     }
 }
@@ -84,6 +104,13 @@ const createProduct = async (req: Request, res: Response) => {
         //checking syntax priceId
         if (!priceId || !numberChecker.scan(priceId) || !checker.scanSpaceAndChar(priceId)) return ResponseCreator.create(400, createModel(400, 'Invalid priceId!', priceId))?.send(res);
 
+        //check exist product name
+        const doesNameExist = productName && await model.Products.findOne({
+            where: {
+                product_name: productName,
+            }
+        })
+        if (doesNameExist) return ResponseCreator.create(400, createModel(400, 'Product has already existed!', productName))?.send(res);
         //check typeId exists
         const isTypeExist = await model.Types.findByPk(typeId);
         if (!isTypeExist) return ResponseCreator.create(400, createModel(404, 'Type not found!', typeId))?.send(res);

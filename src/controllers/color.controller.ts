@@ -12,7 +12,7 @@ const numberChecker = new NumberChecker();
 const getColors = async (req: Request, res: Response) => {
     try {
         const color = await model.Colors.findAll({
-            attributes: ['color_id', 'color_hex'],
+            attributes: ['color_id', 'color_hex', 'color_name'],
             where: {
                 is_deleted: 0,
             }
@@ -27,10 +27,10 @@ const getColors = async (req: Request, res: Response) => {
 //::role::admin
 const createColor = async (req: Request, res: Response) => {
     try {
-        const { colorHex } = req.body;
+        const { colorHex, colorName } = req.body;
 
         //checking syntax cateName
-        if (!colorHex) return ResponseCreator.create(400, createModel(400, 'Invalid color!', colorHex))?.send(res);
+        if (!colorHex || !colorName) return ResponseCreator.create(400, createModel(400, 'Invalid color hex or color name!', colorHex))?.send(res);
 
         //checking is exist
         const isExist = await model.Colors.findOne({
@@ -43,6 +43,7 @@ const createColor = async (req: Request, res: Response) => {
 
         const newColor = await model.Colors.create({
             color_hex: colorHex,
+            color_name: colorName
         })
 
         return ResponseCreator.create(200, createModel(201, 'Successfully!', newColor))?.send(res);
