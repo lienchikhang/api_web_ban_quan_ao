@@ -7,11 +7,13 @@ import { Op, WhereOptions } from 'sequelize'
 import { parse } from "dotenv";
 import { ICondition, IIncludeCondition, IProduct, IProductType } from "../interfaces/product.interface.js";
 import { ProductsAttributes } from "../models/Products.js";
+import PrismaModel from "../classes/PrismaModel.js";
 
 const model = _Model.getInstance().init();
 const checker = new StringChecker();
 const numberChecker = new NumberChecker();
 const objectChecker = new ObjectChecker();
+const prisma = PrismaModel.getInstance().create();
 
 
 //::role::client && admin
@@ -84,7 +86,34 @@ const getProducts = async (req: Request, res: Response) => {
             limit: pageSize,
         });
 
-        return ResponseCreator.create(200, createModel(200, 'Successfully!', { productList: products, lastRecord: products[products.length - 1]?.product_id }))?.send(res);
+        const testProduct = await prisma.products.findMany({
+            select: {
+                product_id: true,
+                product_name: true,
+                product_desc: true,
+                Prices: {
+                    select: {
+                        price_num: true,
+                    }
+                },
+                Images: {
+                    select: {
+                        img_url: true,
+                    }
+                },
+            },
+            where: {
+                AND: {
+                    is_deleted: false,
+                    product_id: {
+                        gt: lastRecord,
+                    }
+                }
+            },
+            take: pageSize,
+        });
+
+        return ResponseCreator.create(200, createModel(200, 'Successfully!', { productList: testProduct, lastRecord: products[products.length - 1]?.product_id }))?.send(res);
 
     } catch (error) {
         console.log('err:: ', error);

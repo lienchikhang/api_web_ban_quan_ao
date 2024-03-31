@@ -9,6 +9,7 @@
     "build": "tsc"
   },
   "dependencies": {
+    "@prisma/client": "^5.11.0",
     "@types/bcrypt": "^5.0.2",
     "@types/cors": "^2.8.17",
     "@types/crypto-js": "^4.2.2",
@@ -22,6 +23,7 @@
     "jsonwebtoken": "^9.0.2",
     "mysql2": "^3.9.2",
     "nodemon": "^3.1.0",
+    "prisma": "^5.11.0",
     "sequelize": "^6.37.1",
     "sequelize-auto": "^0.8.8"
   }
