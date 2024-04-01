@@ -30,6 +30,11 @@ class StringChecker {
         return isValid;
     }
 
+    /**
+     * 
+     * @param string 
+     * @returns true if there's no space and special characters
+     */
     scanSpaceAndChar(string: string): boolean {
         let isValid = true;
 
@@ -46,6 +51,11 @@ export class NumberChecker {
         return !isNaN(data);
     }
 
+    /**
+     * 
+     * @param number 
+     * @returns true if it's a number
+     */
     scan(number: any) {
         let isValid = true;
 
@@ -54,6 +64,28 @@ export class NumberChecker {
         }
 
         return isValid;
+    }
+
+    /**
+     * 
+     * @param price 
+     * @returns true if price is valid
+     */
+    scanPrice(price: number) {
+        if (price <= 0) return false;
+
+        return true;
+    }
+
+    /**
+    * 
+    * @param price 
+    * @returns true if amount is valid
+    */
+    scanAmount(amount: number) {
+        if (amount <= 0) return false;
+
+        return true;
     }
 }
 

@@ -23,7 +23,7 @@ const getProducts = async (req: Request, res: Response) => {
     try {
         let { pageSize = 5, lastRecord = 0, size, color, type, cate } = req.query;
         // let products: Array<IProduct>;
-        console.log({ pageSize, lastRecord, size, color, type, cate })
+        // console.log({ pageSize, lastRecord, size, color, type, cate })
 
         //check lastRecord is number
         if (!numberChecker.scan(lastRecord)) return ResponseCreator.create(400, createModel(400, 'Invalid next record', lastRecord))?.send(res);

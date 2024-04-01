@@ -125,6 +125,7 @@ model Products {
   @@index([cate_id], map: "cate_id")
   @@index([price_id], map: "price_id")
   @@index([type_id], map: "type_id")
+  @@index([product_id], map: "product_id")
 }
 
 model Rates {
