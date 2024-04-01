@@ -5,9 +5,11 @@ import ResponseCreator from "../classes/Response.js";
 import { createModel } from "./response.controller.js";
 import { Op, WhereOptions } from 'sequelize'
 import { parse } from "dotenv";
-import { ICondition, IIncludeCondition, IProduct, IProductType } from "../interfaces/product.interface.js";
+import { ICondition, IDefaultSelect, IDefaultWhere, IIncludeCondition, IProduct, IProductAll, IProductType, } from "../interfaces/product.interface.js";
 import { ProductsAttributes } from "../models/Products.js";
 import PrismaModel from "../classes/PrismaModel.js";
+import { Sizes } from "../models/Sizes.js";
+import { Prisma } from "@prisma/client";
 
 const model = _Model.getInstance().init();
 const checker = new StringChecker();
@@ -19,9 +21,9 @@ const prisma = PrismaModel.getInstance().create();
 //::role::client && admin
 const getProducts = async (req: Request, res: Response) => {
     try {
-        let { pageSize = 5, lastRecord = 0, size, color } = req.query;
-        let products: Array<IProduct>;
-        console.log({ pageSize, lastRecord, size, color })
+        let { pageSize = 5, lastRecord = 0, size, color, type, cate } = req.query;
+        // let products: Array<IProduct>;
+        console.log({ pageSize, lastRecord, size, color, type, cate })
 
         //check lastRecord is number
         if (!numberChecker.scan(lastRecord)) return ResponseCreator.create(400, createModel(400, 'Invalid next record', lastRecord))?.send(res);
@@ -32,61 +34,138 @@ const getProducts = async (req: Request, res: Response) => {
         //check color
         if (!checker.scanSpaceAndChar(color as string)) return ResponseCreator.create(400, createModel(400, 'Invalid color', color))?.send(res);
 
+        //check type
+        if (!checker.scanSpaceAndChar(type as string)) return ResponseCreator.create(400, createModel(400, 'Invalid type', type))?.send(res);
+
+        //check cate
+        if (!checker.scanSpaceAndChar(cate as string)) return ResponseCreator.create(400, createModel(400, 'Invalid cate', cate))?.send(res);
+
         lastRecord = parseInt(lastRecord as string);
         pageSize = parseInt(pageSize as string);
 
-        //base mapping
-        const includes = [{
-            model: model.Prices,
-            attributes: ['price_num'],
-            as: 'price'
-        }, {
-            model: model.Images,
-            attributes: ['img_url'],
-            as: 'Images'
-        }] as Array<IIncludeCondition>;
+        //:::SEQUELIZE
 
-        //if has size condition => add to base mapping
+        // //base mapping
+        // const includes = [{
+        //     model: model.Prices,
+        //     attributes: ['price_num'],
+        //     as: 'price'
+        // }, {
+        //     model: model.Images,
+        //     attributes: ['img_url'],
+        //     as: 'Images'
+        // }] as Array<IIncludeCondition>;
+
+        // //if has size condition => add to base mapping
+        // if (size) {
+        //     includes.push({
+        //         model: model.Sizes,
+        //         attributes: ['size_key'],
+        //         as: 'size_id_Sizes',
+        //         where: {
+        //             size_key: size.toString().toUpperCase()
+        //         }
+        //     })
+        // }
+
+        // //if has color condition => add to base mapping
+        // if (color) {
+        //     includes.push({
+        //         model: model.Colors,
+        //         attributes: ['color_name'],
+        //         as: 'color_id_Colors',
+        //         where: {
+        //             color_name: color.toString().toUpperCase()
+        //         }
+        //     })
+        // }
+
+        // products = await model.Products.findAll({
+        //     attributes: ['product_id', 'product_name', 'product_desc'],
+        //     include: includes,
+        //     where: {
+        //         [Op.and]: [
+        //             { is_deleted: 0 },
+        //             {
+        //                 product_id: {
+        //                     [Op.gt]: lastRecord
+        //                 }
+        //             },
+        //         ]
+        //     },
+        //     limit: pageSize,
+        // });
+
+
+        //::: PRISMA
+        let defaultWhere: IDefaultWhere = {
+            is_deleted: false,
+            product_id: {
+                gt: lastRecord,
+            }
+        }
+
         if (size) {
-            includes.push({
-                model: model.Sizes,
-                attributes: ['size_key'],
-                as: 'size_id_Sizes',
-                where: {
-                    size_key: size.toString().toUpperCase()
-                }
-            })
-        }
-
-        //if has color condition => add to base mapping
-        if (color) {
-            includes.push({
-                model: model.Colors,
-                attributes: ['color_name'],
-                as: 'color_id_Colors',
-                where: {
-                    color_name: color.toString().toUpperCase()
-                }
-            })
-        }
-
-        products = await model.Products.findAll({
-            attributes: ['product_id', 'product_name', 'product_desc'],
-            include: includes,
-            where: {
-                [Op.and]: [
-                    { is_deleted: 0 },
-                    {
-                        product_id: {
-                            [Op.gt]: lastRecord
+            defaultWhere = {
+                ...defaultWhere,
+                Product_Size: {
+                    some: {
+                        Sizes: {
+                            is: {
+                                size_key: {
+                                    equals: size.toString().toUpperCase()
+                                }
+                            }
                         }
-                    },
-                ]
-            },
-            limit: pageSize,
-        });
+                    }
+                }
+            }
+        }
 
-        const testProduct = await prisma.products.findMany({
+        if (color) {
+            defaultWhere = {
+                ...defaultWhere,
+                Product_Color: {
+                    some: {
+                        Colors: {
+                            is: {
+                                color_name: {
+                                    equals: color.toString().toUpperCase()
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        if (type) {
+            defaultWhere = {
+                ...defaultWhere,
+                Types: {
+                    is: {
+                        type_name: {
+                            equals: type,
+                        }
+                    }
+                }
+            }
+        }
+
+        if (cate) {
+            defaultWhere = {
+                ...defaultWhere,
+                Categories: {
+                    is: {
+                        cate_name: {
+                            equals: cate,
+                        }
+                    }
+                }
+            }
+        }
+
+        let products = await prisma.products.findMany({
             select: {
                 product_id: true,
                 product_name: true,
@@ -98,22 +177,19 @@ const getProducts = async (req: Request, res: Response) => {
                 },
                 Images: {
                     select: {
-                        img_url: true,
-                    }
+                        img_url: true
+                    },
+                    take: 2,
                 },
             },
-            where: {
-                AND: {
-                    is_deleted: false,
-                    product_id: {
-                        gt: lastRecord,
-                    }
-                }
-            },
+            where: defaultWhere,
             take: pageSize,
         });
 
-        return ResponseCreator.create(200, createModel(200, 'Successfully!', { productList: testProduct, lastRecord: products[products.length - 1]?.product_id }))?.send(res);
+        //convert Product 
+        let finalProducts = products.map((product) => convertProducts(product as IProductAll));
+
+        return ResponseCreator.create(200, createModel(200, 'Successfully!', { productList: finalProducts, lastRecord: finalProducts[finalProducts.length - 1]?.id }))?.send(res);
 
     } catch (error) {
         console.log('err:: ', error);
@@ -422,6 +498,16 @@ const convertProduct = (product: IProduct) => {
             color_name: color.color ? color.color.color_name : null
         })) : []
     };
+}
+
+const convertProducts = (product: IProductAll) => {
+    return {
+        id: product.product_id,
+        name: product.product_name,
+        desc: product.product_desc,
+        price: product.Prices ? product.Prices.price_num : null,
+        images: product.Images ? product.Images.map((image) => image.img_url) : [],
+    }
 }
 
 export {

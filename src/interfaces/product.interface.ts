@@ -7,25 +7,50 @@ export interface IProduct {
     product_id: number,
     product_name: string,
     product_desc: string,
-    type: {
+    type?: {
         type_name: string,
     },
-    cate: {
+    cate?: {
         cate_name: string,
     },
-    price: {
+    price?: {
         price_num: number
     },
-    Images: {
+    Images?: {
         img_url: string
     }[],
-    Product_Sizes: {
+    Product_Sizes?: {
         size_id: number,
         size: {
             size_key: string,
         }
     }[],
-    Product_Colors: {
+    Product_Colors?: {
+        color_id: number,
+        color: {
+            color_hex: string,
+            color_name: string,
+        }
+    }[]
+}
+
+export interface IProductAll {
+    product_id: number,
+    product_name: string,
+    product_desc: string,
+    Prices?: {
+        price_num: number
+    },
+    Images?: {
+        img_url: string
+    }[],
+    Product_Size?: {
+        Sizes?: {
+            size_id: number,
+            size_key: string,
+        }
+    }[],
+    Product_Colors?: {
         color_id: number,
         color: {
             color_hex: string,
@@ -48,4 +73,39 @@ export interface ICondition {
     product_id?: {},
     size_key?: string,
     color?: string,
+}
+
+export interface IDefaultSelect {
+    product_id: boolean,
+    product_name: boolean,
+    product_desc: boolean,
+    Prices: {
+        select?: {},
+        include?: {},
+        where?: {},
+    },
+    Images: {
+        select?: {},
+        include?: {},
+        where?: {},
+    },
+    Product_Size?: {
+        select?: {},
+        include?: {},
+        where?: {},
+    },
+    Product_Color?: {
+        select?: {},
+        include?: {},
+        where?: {},
+    }
+}
+
+export interface IDefaultWhere {
+    is_deleted: boolean,
+    product_id: {},
+    Product_Size?: {},
+    Product_Color?: {},
+    Types?: {},
+    Categories?: {},
 }
